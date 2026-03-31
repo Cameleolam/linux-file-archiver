@@ -1,0 +1,29 @@
+# /etc/file-archiver/config.toml
+# Default configuration for file-archiver
+# CLI arguments override these values
+
+# Where archived files go. Each user gets a subdirectory.
+# Example: /var/archive/alice/documents/report.txt
+archive_dir = "/var/archive"
+
+# Log file location
+log_file = "/var/log/file-archiver.log"
+
+# Lock file for preventing concurrent runs
+lock_file = "/var/lock/file-archiver.lock"
+
+# Glob patterns to exclude from archiving
+# Matched against the relative path from the user's home directory
+[exclude]
+patterns = [
+    ".ssh/*",
+    ".gnupg/*",
+    ".bash_history",
+    ".bashrc",
+    ".profile",
+    ".bash_logout",
+    "*.tmp",
+    ".cache/*",
+    "__pycache__/*",
+    ".local/share/Trash/*",
+]
