@@ -1,6 +1,40 @@
-.venv
-
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
-*.py[codz]
-*$py.class
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+.venv/
+venv/
+
+# Poetry
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debian build artifacts
+debian/.debhelper/
+debian/file-archiver/
+debian/files
+debian/*.debhelper
+debian/*.substvars
+*.deb
+*.changes
+*.buildinfo
