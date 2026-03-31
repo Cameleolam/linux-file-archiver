@@ -11,5 +11,6 @@ Share the project details
 Asked for subjects to explore and to read about
 Sketched architecture & flow
 Explored best way to containerize dependencies and dev modules needed
+Generated 5 ADRs after showing the first example and iterating over questions raised from reading docs/iterating with ai
 
 ### Agents

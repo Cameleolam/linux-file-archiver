@@ -2,7 +2,7 @@
 Logging hours spent and actions done.
 Consciously logging anything to keep track of my progress and questions
 
-## 31/03/2026: 4 hours
+## 31/03/2026: 5 hours
 
 #### General project exploration
 - Wrote `task.md` : project task
@@ -48,7 +48,7 @@ Never did debian packaging before, should take another look at it later
 
 Never did file lock before. Raised questions on robustness. Available [here](../adr/001-architecture.md#Robustness)
 
-#### Wrote architecture ADR
+#### Wrote ADR 001
 
 [here](../adr/001-architecture.md)
 
@@ -88,3 +88,12 @@ sudo apt-get install git
 # configured git
 # commit docs and architecture
 ```
+
+#### Iterated with Claude (chat) about questions on the architecture
+
+Generated :
+[Robustness decisions](../adr/002-robustness.md)
+[User & Groups handling decisions](../adr/003-user-group-handling.md)
+[File operations decisions](../adr/004-file-operations.md)
+[CLI Logging config decisions](../adr/005-cli-logging-config.md)
+[Testing strategy decisions](../adr/006-testing-strategy.md)
