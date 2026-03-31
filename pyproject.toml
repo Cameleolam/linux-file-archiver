@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "archiver"
+version = "0.1.0"
+description = "Archive files for members of a specified Linux group"
+readme = "README.md"
+authors = ["Cameleolam mail@mail.com"]
+
+
+[tool.poetry.dependencies]
+python = "^3.13"
+
+[tool.poetry.group.dev.dependencies]
+ruff = ">=0.15.8,<0.16.0"
+mypy = ">=1.19.1,<2.0.0"
+[tool.poetry.group.test.dependencies]
+pytest = ">=8.0,<9.0"
+
+
+[tool.poetry.scripts]
+archiver = "archiver.cli:main"
+
+[tool.ruff]
+line-length = 88
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
