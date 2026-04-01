@@ -29,9 +29,10 @@ state in a generator, which is less readable for this use case.
 
 ### Q: LOCK_EX, LOCK_SH, LOCK_NB?
 **A: LOCK_EX | LOCK_NB.**
+- LOCK_SH: shared lock (for multiple process, and readonly access)
 - LOCK_EX: exclusive lock (only one archiver at a time)
 - LOCK_NB: non-blocking (if locked, fail immediately instead of waiting)
-- Combined: try to get exclusive lock, if can't, exit cleanly with code 0
+- Combined EX and NB: try to get exclusive lock, if can't, exit cleanly with code 0
 
 We don't want the second instance to queue up and wait. It should detect
 "another instance is running" and exit immediately.
