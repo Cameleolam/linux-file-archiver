@@ -24,6 +24,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 line-length = 88
 target-version = "py313"
+extend-exclude = ["docs/", "*.md"]
 
 [tool.ruff.lint]
 select = [
