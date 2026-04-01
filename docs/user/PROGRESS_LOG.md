@@ -202,3 +202,22 @@ Wrote ADRs 006 :
 [BlockingIOError](https://docs.python.org/3/library/exceptions.html#BlockingIOError)
 
 Wrote first pass, then corrected with claude.
+
+Ran adversarial review with codex
+```md
+  No-ship: the new lock acquisition path does not reliably classify lock contention, so a second instance can surface as an unhandled OS error instead of the documented clean "already running" exit path.                           
+                                                                                                                                                                                                                                      
+  Findings:                                                                                                                                                                                                                           
+  - [high] Lock contention handling is too narrow and can misclassify a normal concurrent run as a hard failure (archiver/locking.py:38-48)                                                                                         
+  fcntl.flock(..., LOCK_EX | LOCK_NB) does not guarantee a BlockingIOError on contention across platforms and emulation paths; the Python and flock(2) behavior allows other OSError variants for the same "would block" condition    
+  (commonly EACCES/EAGAIN). This implementation only translates BlockingIOError, so a legitimate second invocation can escape as a different exception instead of the intended "Another instance is running" path. The impact is  
+  user-visible: cron or automation that should no-op cleanly can fail noisy or nonzero during ordinary overlap. This is an inference from the documented flock error surface, but it is directly relevant to these lines because they 
+  hard-code a single exception class.                                                                                                                                                                                                
+  Recommendation: Catch OSError from fcntl.flock, inspect errno, and translate both EAGAIN and EACCES contention cases into LockAcquisitionError while re-raising unrelated I/O errors unchanged. Add a test that simulates or asserts
+   the broader errno-based handling so the clean-exit contract is actually locked in.                                                                                                                                               
+                                                                                                                                                                                                                                      
+  Next steps:
+  - Broaden lock contention handling to errno-based OSError checks.                                                                                                                                                                   
+  - Add a regression test for non-BlockingIOError contention behavior.  
+```
+OSError and errno don't exist on the target platform (linux) for this project. Irrelevant atm.

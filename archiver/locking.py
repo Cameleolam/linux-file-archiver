@@ -4,15 +4,51 @@ Uses fcntl.flock (advisory lock) on a lock file.
 Advisory means: the lock only works if all processes cooperate
 by checking the same lock file. A process that ignores the lock
 can still access files. This is standard for Linux CLI tools.
-
-QUESTION FOR YOU: advisory vs mandatory locking?
-- Advisory (fcntl.flock): cooperative, standard, what cron jobs use
-- Mandatory: enforced by kernel, requires special filesystem mount options
-  (mand option + setgid bit), almost never used in practice
-Advisory is the right choice here.
-
-QUESTION FOR YOU: What happens if the process crashes while holding the lock?
-fcntl.flock is automatically released when the file descriptor is closed,
-which happens when the process dies (kernel cleans up FDs). So a crash
-won't leave a stale lock. This is a key advantage over PID-file based locking.
 """
+
+from __future__ import annotations
+
+import fcntl
+import logging
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+
+class LockAcquisitionError(Exception):
+    """Raised when the lock file cannot be acquired."""
+
+    pass
+
+
+class FileLock:
+    """Context manager for file-based locking
+    Advisory locking was chosen for simplicity"""
+
+    def __init__(self, file_path: Path | str):
+        """Stores the file path"""
+        self.file_path = file_path
+        self._file = None
+
+    def __enter__(self):
+        """Opens the file in append mode, calls the file lock
+        and catches BlockingIOError"""
+
+        self._file = open(file=self.file_path, mode="a")
+        try:
+            fcntl.flock(
+                self._file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB
+            )
+        except BlockingIOError as e:
+            self._file.close()
+            logger.info("Another instance is running")
+            raise (
+                LockAcquisitionError(
+                    f"File lock couldn't be acquired on file {self.file_path}")
+            ) from e
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """Closes the file"""
+        self._file.close()
