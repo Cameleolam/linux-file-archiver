@@ -196,12 +196,12 @@ Wrote ADRs 006 :
 
 ## 01/04/2026: 1 hour
 
-#### Wrote locking.py
+#### Wrote locking.py and test_locking.py
 [Context manager](https://docs.python.org/3/reference/datamodel.html#with-statement-context-managers)
 [fnctl.flock](https://docs.python.org/3/library/fcntl.html#fcntl.flock)
 [BlockingIOError](https://docs.python.org/3/library/exceptions.html#BlockingIOError)
 
-Wrote first pass, then corrected with claude.
+Wrote first pass, then corrected with claude. Wrote tests boilerplates, then filled it with claude and corrected it if necessary.
 
 Ran adversarial review with codex
 ```md
@@ -209,10 +209,7 @@ Ran adversarial review with codex
                                                                                                                                                                                                                                       
   Findings:                                                                                                                                                                                                                           
   - [high] Lock contention handling is too narrow and can misclassify a normal concurrent run as a hard failure (archiver/locking.py:38-48)                                                                                         
-  fcntl.flock(..., LOCK_EX | LOCK_NB) does not guarantee a BlockingIOError on contention across platforms and emulation paths; the Python and flock(2) behavior allows other OSError variants for the same "would block" condition    
-  (commonly EACCES/EAGAIN). This implementation only translates BlockingIOError, so a legitimate second invocation can escape as a different exception instead of the intended "Another instance is running" path. The impact is  
-  user-visible: cron or automation that should no-op cleanly can fail noisy or nonzero during ordinary overlap. This is an inference from the documented flock error surface, but it is directly relevant to these lines because they 
-  hard-code a single exception class.                                                                                                                                                                                                
+  fcntl.flock(..., LOCK_EX | LOCK_NB) does not guarantee a BlockingIOError on contention across platforms and emulation paths; the Python and flock(2) behavior allows other OSError variants for the same "would block" condition (commonly EACCES/EAGAIN). This implementation only translates BlockingIOError, so a legitimate second invocation can escape as a different exception instead of the intended "Another instance is running" path. The impact is user-visible: cron or automation that should no-op cleanly can fail noisy or nonzero during ordinary overlap. This is an inference from the documented flock error surface, but it is directly relevant to these lines because they hard-code a single exception class.                                                                                                                                                                                                
   Recommendation: Catch OSError from fcntl.flock, inspect errno, and translate both EAGAIN and EACCES contention cases into LockAcquisitionError while re-raising unrelated I/O errors unchanged. Add a test that simulates or asserts
    the broader errno-based handling so the clean-exit contract is actually locked in.                                                                                                                                               
                                                                                                                                                                                                                                       
@@ -220,4 +217,32 @@ Ran adversarial review with codex
   - Broaden lock contention handling to errno-based OSError checks.                                                                                                                                                                   
   - Add a regression test for non-BlockingIOError contention behavior.  
 ```
-OSError and errno don't exist on the target platform (linux) for this project. Irrelevant atm.
+EACCES concern applies to POSIX fcntl() record locks, not flock(). Irrelevant atm for Linux-only.
+
+
+## 06/04/2026: 3 hours
+
+#### Wrote config.py and test_config boilerplate
+
+Read ADR 5 again and necessary documentation (tomlib, argparse etc). Used dataclass over NamedTuple/dict, as decided in the ADR since it's mutable during construction and type safe + comes with defaults built in.
+Wrote first pass, then corrected with claude. Wrote tests boilerplates (mostly happy paths), then filled it with claude and corrected it if necessary.
+
+Ran adversarial review with codex
+```
+No-ship: the new config merge path accepts only the exact happy-path TOML shape and turns other syntactically valid configs into uncaught runtime exceptions instead of a controlled invalid-config failure.                      
+                                                                                                                                                                                                                                    
+  Findings:                                                                                                                                                                                                                         
+  - [high] Malformed-but-valid TOML crashes during merge instead of being rejected cleanly (archiver/config.py:112-128)                                                                                                             
+  load_config() only rejects syntax errors, but merge_configs() assumes the parsed object has the exact expected types. In particular, file_config.get("exclude", {}).get("patterns", []) will raise AttributeError if exclude is present but not a table, and Path(file_config[key]) will raise TypeError for non-string path values. This means a valid TOML file with the wrong shape can take the process down with a traceback during startup, which violates the documented invalid config -> exit 1 behavior and makes operator recovery harder. This is an inference from the current code paths; no schema validation exists before the merge.
+  Recommendation: Add explicit schema/type validation before merging: verify [exclude] is a table, patterns is a list of strings, path fields are strings/path-like, and boolean/report fields have allowed types/values. Convert any mismatch into a ValueError that includes the offending field, and add regression tests for wrong-shaped but TOML-valid configs.
+
+  Next steps:
+  - Add negative tests for semantically invalid TOML shapes, not just parse errors.
+  - Handle invalid config values with a controlled error path that surfaces the filename and field name.
+```
+
+Codex review flagged missing schema validation in merge_configs, like a valid TOML with wrong shape would crash with AttributeError instead of a clean error. This is a valid concern but low priority. Could be done later if time allows.
+
+
+
+-- next step : core logic : archiver.py (ADR 003 and 004)
