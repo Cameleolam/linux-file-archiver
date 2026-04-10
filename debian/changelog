@@ -1,0 +1,5 @@
+archiver (0.1.0) unstable; urgency=low
+
+  * Initial release: archive files for members of a Linux group
+
+ -- Cameleolam <112733005+Cameleolam@users.noreply.github.com>  Fri, 10 Apr 2026 15:19:27 +0200

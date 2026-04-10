@@ -1,0 +1,19 @@
+Source: archiver
+Section: admin
+Priority: optional
+Maintainer: Cameleolam <112733005+Cameleolam@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               pybuild-plugin-pyproject,
+               python3-all,
+               python3-poetry-core
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: archiver
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: Archive files for members of a specified Linux group
+ Moves files from user home directories to a configurable archive folder,
+ preserving the original directory structure. Supports exclude patterns,
+ dry-run mode, concurrent-run locking, and JSON reporting.

@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        # Config directory and default config
+        mkdir -p /etc/archiver
+        if [ ! -f /etc/archiver/config.toml ]; then
+            cp /usr/share/archiver/config.example.toml \
+               /etc/archiver/config.toml
+        fi
+
+        # Archive directory
+        mkdir -p /var/archive
+
+        # Log file with restrictive permissions
+        if [ ! -f /var/log/archiver.log ]; then
+            touch /var/log/archiver.log
+            chmod 640 /var/log/archiver.log
+        fi
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
