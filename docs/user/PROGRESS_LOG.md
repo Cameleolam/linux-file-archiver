@@ -419,3 +419,11 @@ rm -rf /tmp/test-archive
 All tests passed: files moved, structure preserved, content preserved, excludes respected, symlinks skipped, source files removed.
 
 Note: needed `--lock-file` CLI arg because default `/var/lock/archiver.lock` wasn't writable. Added the option to cli.py — merge_configs already handled `lock_file` in the path fields loop, so only argparse needed the new argument.
+
+#### Built and tested .deb package
+
+- `dpkg-buildpackage -us -uc -b`: first attempt failed because pybuild tried to run tests with unittest (not pytest). Fixed by adding `override_dh_auto_test` in debian/rules to skip tests during build.
+- Installed with `sudo dpkg -i ../archiver_0.1.0_all.deb`
+- Verified: `/usr/bin/archiver` installed, `--help` works, config at `/etc/archiver/config.toml`, `/var/archive/` created
+- Ran full integration test with installed version (sudo archiver --group testarchive --verbose): all passed
+- Note: `/var/lock/archiver.lock` ownership can cause issues if first created by non-root user. Stale lock file needed manual cleanup.

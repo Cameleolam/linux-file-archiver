@@ -64,3 +64,4 @@ Every line of code in this repo is code I understand and can explain.
 - Wrote MIT LICENSE
 - Updated README with install/usage/test sections
 - Guided integration test with fake users (alice, bob): dry-run then real run, verified all behaviors
+- Fixed deb build failure: pybuild tried unittest instead of pytest, added override_dh_auto_test to skip
