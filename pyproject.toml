@@ -7,7 +7,7 @@ authors = ["Cameleolam 112733005+Cameleolam@users.noreply.github.com"]
 
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0"
@@ -23,7 +23,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py311"
 extend-exclude = ["docs/", "*.md"]
 
 [tool.ruff.lint]
