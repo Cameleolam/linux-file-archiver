@@ -220,9 +220,9 @@ Ran adversarial review with codex
 EACCES concern applies to POSIX fcntl() record locks, not flock(). Irrelevant atm for Linux-only.
 
 
-## 06/04/2026: 3 hours
+## 06/04/2026: 2 hours
 
-#### Wrote config.py and test_config boilerplate
+#### Wrote config.py and test_config
 
 Read ADR 5 again and necessary documentation (tomlib, argparse etc). Used dataclass over NamedTuple/dict, as decided in the ADR since it's mutable during construction and type safe + comes with defaults built in.
 Wrote first pass, then corrected with claude. Wrote tests boilerplates (mostly happy paths), then filled it with claude and corrected it if necessary.
@@ -244,5 +244,26 @@ No-ship: the new config merge path accepts only the exact happy-path TOML shape 
 Codex review flagged missing schema validation in merge_configs, like a valid TOML with wrong shape would crash with AttributeError instead of a clean error. This is a valid concern but low priority. Could be done later if time allows.
 
 
+## 08-10/04/2026 : 3 hours
 
--- next step : core logic : archiver.py (ADR 003 and 004)
+#### Wrote archiver.py and test_archiver (ADR 003 + 004)
+
+Wrote function signatures, docstrings and TODOs for:
+- `get_group_members` : primary + secondary group resolution
+- `get_user_home` : home path or None
+- `should_exclude` : two-strategy pattern matching
+- `archive_file` : single file move with shutil.move
+- `archive_user` : walk + move for one user
+- `archive_group` : orchestrate everything
+
+Added `ArchiveResult` dataclass to track per-user results (files_moved, files_skipped, errors).
+
+Design decision: `archive_group` returns `list[ArchiveResult]`, cli.py computes exit code (0/1/2) from it. Keeps data and decision separate. ADR 002 defines the exit codes but doesn't prescribe where they're computed.
+
+I started by defining the tests (me+ai assistant) since this is core logic and generating it:
+- pytest fixtures to create fake home directory/archive and config
+- tests boilerplates
+
+I then implemented the core logic and refined with claude (fixed dry run bug, and iterated about the dirnames[:] slice assignment and such)
+
+Added end to end tests (TestArchiveGroup)
