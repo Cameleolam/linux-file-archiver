@@ -427,3 +427,13 @@ Note: needed `--lock-file` CLI arg because default `/var/lock/archiver.lock` was
 - Verified: `/usr/bin/archiver` installed, `--help` works, config at `/etc/archiver/config.toml`, `/var/archive/` created
 - Ran full integration test with installed version (sudo archiver --group testarchive --verbose): all passed
 - Note: `/var/lock/archiver.lock` ownership can cause issues if first created by non-root user. Stale lock file needed manual cleanup.
+- Tested JSON report output: `sudo archiver --group user --dry-run --report json 2>/dev/null` — clean JSON on stdout
+
+#### Release
+
+```sh
+dpkg-buildpackage -us -uc -b
+git tag v0.1.0
+git push --tags
+# Then create GitHub release from tag in browser, attach ../archiver_0.1.0_all.deb
+```
