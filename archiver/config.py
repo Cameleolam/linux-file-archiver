@@ -10,6 +10,7 @@ import logging
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class Config:
     report_format: str | None = None # None = no report, "json" = JSON to stdout
 
 
-def load_config(config_path: Path, explicit: bool) -> dict:
+def load_config(config_path: Path, explicit: bool) -> dict[str, Any]:
     """Load a TOML config file and return its contents as a raw dict.
 
     Args:
@@ -67,7 +68,7 @@ def load_config(config_path: Path, explicit: bool) -> dict:
         tomllib.TOMLDecodeError: If the file contains invalid TOML.
     """
 
-    config = {}
+    config: dict[str, Any] = {}
     if not config_path.exists():
         if not explicit:
             logger.info(f"Config file: {config_path!s} does not exist, using defaults \
@@ -86,7 +87,10 @@ def load_config(config_path: Path, explicit: bool) -> dict:
     return config
 
 
-def merge_configs(file_config: dict, cli_args: dict) -> Config:
+def merge_configs(
+    file_config: dict[str, Any],
+    cli_args: dict[str, Any],
+) -> Config:
     """Merge file config and CLI args into a Config instance.
 
     Precedence: cli_args > file_config > dataclass defaults.

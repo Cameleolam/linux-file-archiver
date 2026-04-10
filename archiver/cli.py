@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 from archiver.archiver import ArchiveResult, archive_group
-from archiver.config import Config, load_config, merge_configs
+from archiver.config import load_config, merge_configs
 from archiver.locking import FileLock, LockAcquisitionError
 
 # Linux convention for system-wide config. Installed by .deb package.
@@ -47,7 +47,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                         help="Override archive directory")
     parser.add_argument("--config", metavar="PATH",
                         default=DEFAULT_CONFIG_PATH,
-                        help="Config file path (default: /etc/file-archiver/config.toml)")
+                        help="Config file path")
     parser.add_argument("--dry-run", action="store_true",
                         help="Log what would happen without moving files")
     parser.add_argument("--report", choices=["json"],

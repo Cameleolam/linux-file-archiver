@@ -248,7 +248,7 @@ def archive_group(config: Config) -> list[ArchiveResult]:
 
     archive_dir creation happens here - the archiver owns the concept.
     """
-    results = []
+    results: list[ArchiveResult] = []
 
     try:
         members = get_group_members(config.group)

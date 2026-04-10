@@ -11,6 +11,7 @@ from __future__ import annotations
 import fcntl
 import logging
 from pathlib import Path
+from typing import IO
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +26,12 @@ class FileLock:
     """Context manager for file-based locking
     Advisory locking was chosen for simplicity"""
 
-    def __init__(self, file_path: Path | str):
+    def __init__(self, file_path: Path | str) -> None:
         """Stores the file path"""
         self.file_path = file_path
-        self._file = None
+        self._file: IO[str] | None = None
 
-    def __enter__(self):
+    def __enter__(self) -> FileLock:
         """Opens the file in append mode, calls the file lock
         and catches BlockingIOError"""
 
@@ -49,6 +50,12 @@ class FileLock:
 
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: object,
+    ) -> None:
         """Closes the file"""
-        self._file.close()
+        if self._file is not None:
+            self._file.close()
