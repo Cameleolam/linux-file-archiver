@@ -30,8 +30,10 @@ htmlcov/
 Thumbs.db
 
 # Debian build artifacts
+.pybuild/
 debian/.debhelper/
 debian/archiver/
+debian/debhelper-build-stamp
 debian/files
 debian/*.debhelper
 debian/*.substvars
