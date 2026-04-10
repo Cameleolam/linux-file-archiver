@@ -56,3 +56,10 @@ Every line of code in this repo is code I understand and can explain.
   - Fixed setup_logging order (stderr handler before file handler so warnings are visible)
 - Filled tests boilerplate on test_cli.py
 - Fixed linting and typing warning from ruff and mypy
+- Explored codebase for debian packaging readiness (Explore agent)
+- Planned debian packaging approach (Plan agent)
+- Wrote ADR 007 for packaging decisions
+- Renamed all file-archiver -> archiver across codebase
+- Generated all 7 debian packaging files (control, rules, changelog, copyright, install, postinst, source/format)
+- Wrote MIT LICENSE
+- Updated README with install/usage/test sections

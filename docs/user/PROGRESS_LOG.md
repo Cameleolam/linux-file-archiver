@@ -2,7 +2,7 @@
 Logging hours spent and actions done.
 Consciously logging anything to keep track of my progress and questions
 
-## 31/03/2026: 6 hours
+## 31/03/2026: 6h
 
 #### General project exploration
 - Wrote `task.md` : project task
@@ -194,7 +194,7 @@ Docs read :
 Wrote ADRs 006 :
 [Testing strategy decisions](../adr/006-testing-strategy.md)
 
-## 01/04/2026: 1 hour
+## 01/04/2026: 1h
 
 #### Wrote locking.py and test_locking.py
 [Context manager](https://docs.python.org/3/reference/datamodel.html#with-statement-context-managers)
@@ -220,7 +220,7 @@ Ran adversarial review with codex
 EACCES concern applies to POSIX fcntl() record locks, not flock(). Irrelevant atm for Linux-only.
 
 
-## 06/04/2026: 2 hours
+## 06/04/2026: 2h
 
 #### Wrote config.py and test_config
 
@@ -244,7 +244,7 @@ No-ship: the new config merge path accepts only the exact happy-path TOML shape 
 Codex review flagged missing schema validation in merge_configs, like a valid TOML with wrong shape would crash with AttributeError instead of a clean error. This is a valid concern but low priority. Could be done later if time allows.
 
 
-## 08-10/04/2026 : 3 hours
+## 08-10/04/2026 : 3h
 
 #### Wrote archiver.py and test_archiver (ADR 003 + 004)
 
@@ -268,9 +268,9 @@ I then implemented the core logic and refined with claude (fixed dry run bug, an
 
 Added end to end tests (TestArchiveGroup)
 
-## 10/04/2026 : 1 hour 30
+## 10/04/2026 : 4h30
 
-#### Wrote cli.py and test_cli.py (ADR 005)
+#### Wrote cli.py and test_cli.py (ADR 005) 1h30
 - Last module: argparse, logging setup, wiring config + lock + archiver, exit codes
 - print_report: TODO, optional JSON output to stdout
 - Wrote small tests boilerplate on:
@@ -283,3 +283,24 @@ Added end to end tests (TestArchiveGroup)
 -- next : review, debian packaging and tests
 
 Ran `poetry run ruff check .` for linting and `poetry run mypy archiver/` for typing
+
+#### Debian packaging 3h
+
+Read docs:
+- [Pybuild](https://wiki.debian.org/Python/Pybuild)
+- [Debian New Maintainers' Guide Ch.4](https://www.debian.org/doc/manuals/maint-guide/dreq.en.html)
+- `man dh`, `man dh_install`
+
+Decisions (ADR 007):
+- Command name: `archiver` (not `file-archiver`: shorter, matches Python package)
+- dh-python with pybuild (standard for PEP 517 Python projects)
+- Source format: 3.0 (native): we are upstream author
+- Config: shipped to /usr/share/, postinst copies to /etc/ on first install only
+- MIT license
+
+Steps done:
+1. Renamed all `file-archiver` references to `archiver` (code, config, docs, ADRs)
+2. Lowered Python version to ^3.11 (tomllib is stdlib since 3.11, matches mypy target)
+3. Added MIT LICENSE
+4. Created 7 debian files (source/format, changelog, control, rules, copyright, install, postinst)
+5. Updated README with install/usage/test instructions
