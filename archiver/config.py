@@ -15,8 +15,8 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 DEFAULT_ARCHIVE_FOLDER_LOCATION = "/var/archive"
-DEFAULT_LOCK_FILE_PATH_LOCATION = "/var/lock/file-archiver.lock"
-DEFAULT_LOG_FILE_LOCATION = "/var/log/file-archiver.log"
+DEFAULT_LOCK_FILE_PATH_LOCATION = "/var/lock/archiver.lock"
+DEFAULT_LOG_FILE_LOCATION = "/var/log/archiver.log"
 
 DEFAULT_EXCLUDE_PATTERNS = [
     ".ssh/*",

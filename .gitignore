@@ -31,7 +31,7 @@ Thumbs.db
 
 # Debian build artifacts
 debian/.debhelper/
-debian/file-archiver/
+debian/archiver/
 debian/files
 debian/*.debhelper
 debian/*.substvars

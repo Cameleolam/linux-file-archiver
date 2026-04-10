@@ -90,7 +90,7 @@ Will skip UI for now, CLI is good enough : CLI + flags
 usage example :
 
 ```bash
-file-archiver --group testarchive --report json
+archiver --group testarchive --report json
 ```
 
 report example :
@@ -113,7 +113,7 @@ File / stdout ?
 Logging example :
 ```sh
 2026-04-01 10:30:01 INFO  Starting archive for group 'testarchive'
-2026-04-01 10:30:01 INFO  Lock acquired: /var/lock/file-archiver.lock
+2026-04-01 10:30:01 INFO  Lock acquired: /var/lock/archiver.lock
 2026-04-01 10:30:01 INFO  Group 'testarchive' has 2 members: alice, bob
 2026-04-01 10:30:01 INFO  Archiving user 'alice' from /home/alice
 2026-04-01 10:30:01 INFO  Moved: /home/alice/documents/report.txt → /var/archive/alice/documents/report.txt

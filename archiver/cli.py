@@ -1,11 +1,11 @@
-"""CLI entry point for file-archiver.
+"""CLI entry point for archiver.
 
 Handles argument parsing, config loading, logging setup, and orchestration.
 This module is the glue - it doesn't contain business logic.
 
 Entry point defined in pyproject.toml:
     [tool.poetry.scripts]
-    file-archiver = "archiver.cli:main"
+    archiver = "archiver.cli:main"
 """
 
 from __future__ import annotations
@@ -21,9 +21,9 @@ from archiver.config import load_config, merge_configs
 from archiver.locking import FileLock, LockAcquisitionError
 
 # Linux convention for system-wide config. Installed by .deb package.
-DEFAULT_CONFIG_PATH = Path("/etc/file-archiver/config.toml")
+DEFAULT_CONFIG_PATH = Path("/etc/archiver/config.toml")
 
-logger = logging.getLogger("file-archiver")
+logger = logging.getLogger("archiver")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -32,13 +32,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     Arguments:
       --group GROUP        (required) Linux group name to archive
       --archive-dir DIR    Override archive directory
-      --config PATH        Config file path (default: /etc/file-archiver/config.toml)
+      --config PATH        Config file path (default: /etc/archiver/config.toml)
       --dry-run            Log what would happen without moving files
       --report json        Output machine-readable summary to stdout
       --verbose            Enable DEBUG level logging
     """
     parser = argparse.ArgumentParser(
-        prog="file-archiver",
+        prog="archiver",
         description="Archive files for members of a specified Linux group.",
     )
     parser.add_argument("--group", required=True,

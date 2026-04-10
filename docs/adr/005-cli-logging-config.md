@@ -15,7 +15,7 @@ that supports mutable construction and read-only usage.
 ### Q: Missing config file - error or silent?
 **A: Depends on who asked for it.**
 - User passes `--config /bad/path` explicitly → ERROR, exit 1
-- No `--config` flag and default `/etc/file-archiver/config.toml` doesn't exist → use defaults, log INFO
+- No `--config` flag and default `/etc/archiver/config.toml` doesn't exist → use defaults, log INFO
 
 Config is optional. CLI args are always sufficient. But if you explicitly point to
 a config file that doesn't exist, that's a user error.
@@ -23,7 +23,7 @@ a config file that doesn't exist, that's a user error.
 ### Q: Invalid TOML - let error propagate?
 **A: Catch and wrap.** `tomllib.TOMLDecodeError` gives a raw parse error. Wrap it
 with the filename for a friendlier message:
-`"Failed to parse config: /etc/file-archiver/config.toml: {original error}"`
+`"Failed to parse config: /etc/archiver/config.toml: {original error}"`
 Checked at startup before any archival begins.
 
 ### Q: Nested [exclude] section - how to handle?
@@ -44,11 +44,11 @@ same typed config.
 **A: stderr for logs, stdout for --report only.**
 ```bash
 # Clean JSON
-file-archiver --group foo --report json 2>/dev/null
+archiver --group foo --report json 2>/dev/null
 # Logs only
-file-archiver --group foo
+archiver --group foo
 # Both
-file-archiver --group foo --report json
+archiver --group foo --report json
 ```
 Standard Unix convention. Machine-readable output on stdout, human-readable
 logs on stderr. Enables piping and redirection.
@@ -81,7 +81,7 @@ production. Standard pattern.
 ```
 Defaults (in Config dataclass)
   ↓ overridden by
-Config file (/etc/file-archiver/config.toml)
+Config file (/etc/archiver/config.toml)
   ↓ overridden by
 CLI arguments (--archive-dir, --verbose, etc.)
 ```
@@ -95,7 +95,7 @@ Before any archival:
 
 ### CLI Interface
 ```
-file-archiver --group GROUP              (required)
+archiver --group GROUP              (required)
               --archive-dir DIR          (override archive location)
               --config PATH              (config file path)
               --dry-run                  (preview without moving)
@@ -107,5 +107,5 @@ file-archiver --group GROUP              (required)
 - stderr: human-readable logs (INFO/WARNING/ERROR)
 - stdout: reserved for `--report json` output only
 - File: configured path, fallback to stderr-only if not writable
-- Format: `%(asctime)s %(levelname)-5s [file-archiver] %(message)s`
+- Format: `%(asctime)s %(levelname)-5s [archiver] %(message)s`
 - Level: INFO default, DEBUG with --verbose

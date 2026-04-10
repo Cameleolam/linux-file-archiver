@@ -1,5 +1,5 @@
-# /etc/file-archiver/config.toml
-# Default configuration for file-archiver
+# /etc/archiver/config.toml
+# Default configuration for archiver
 # CLI arguments override these values
 
 # Where archived files go. Each user gets a subdirectory.
@@ -7,10 +7,10 @@
 archive_dir = "/var/archive"
 
 # Log file location
-log_file = "/var/log/file-archiver.log"
+log_file = "/var/log/archiver.log"
 
 # Lock file for preventing concurrent runs
-lock_file = "/var/lock/file-archiver.lock"
+lock_file = "/var/lock/archiver.lock"
 
 # Glob patterns to exclude from archiving
 # Matched against the relative path from the user's home directory

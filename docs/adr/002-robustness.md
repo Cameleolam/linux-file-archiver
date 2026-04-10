@@ -11,7 +11,7 @@ gracefully, and ensure the tool is idempotent.
 ### Q: Advisory (fcntl.flock) vs mandatory locking?
 **A: Advisory.** Standard for Linux CLI tools. Cooperative: only works if all processes
 check the same lock file. A rogue process can bypass it, but that's true of any
-user-space tool. We protect against the expected case: two file-archiver instances
+user-space tool. We protect against the expected case: two archiver instances
 running simultaneously (cron overlap, manual + scheduled run).
 
 Known limitation: other tools accessing the same files are not prevented. Documented.
@@ -39,7 +39,7 @@ We don't want the second instance to queue up and wait. It should detect
 
 ### Q: Delete lock file on exit?
 **A: No. Leave it.** The lock is on the file descriptor, not the file's existence.
-One lock file (`/var/lock/file-archiver.lock`) is created once and reused forever.
+One lock file (`/var/lock/archiver.lock`) is created once and reused forever.
 0 bytes, harmless.
 
 Deleting creates a race condition: process A deletes lock file, process B creates
@@ -59,7 +59,7 @@ a second archiver from touching the same files during the operation.
 ## Decision
 
 ### Locking Strategy
-- Single lock file at configurable path (default: `/var/lock/file-archiver.lock`)
+- Single lock file at configurable path (default: `/var/lock/archiver.lock`)
 - `fcntl.flock` with `LOCK_EX | LOCK_NB`
 - Context manager class wrapping the lock lifecycle
 - If lock cannot be acquired: log INFO "Another instance is running", exit 0
