@@ -83,11 +83,39 @@ def setup_logging(log_file: Path, verbose: bool = False) -> None:
     except (PermissionError, FileNotFoundError):
         logger.warning(f"Cannot write to {log_file}, logging to stderr only")
 
-def print_report(results: list[ArchiveResult], format: str) -> None:
+def print_report(results: list[ArchiveResult], format: str, group: str) -> None:
     """Print machine-readable report to stdout.
-    """
-    pass
 
+    Args:
+        results: List of ArchiveResult from archive_group.
+        format: Output format (currently only "json").
+        group: Group name for the report header.
+    """
+
+    # Aggregate results
+    total_moved = sum(r.files_moved for r in results)
+    total_skipped = sum(r.files_skipped for r in results)
+    total_errors = sum(r.errors for r in results)
+    total_users = len(results)
+
+    if format == "json":
+        report = {
+            "group": group,
+            "users": total_users,
+            "total_moved": total_moved,
+            "total_skipped": total_skipped,
+            "total_errors": total_errors,
+            "per_user": [
+                {
+                    "username": r.username,
+                    "moved": r.files_moved,
+                    "skipped": r.files_skipped,
+                    "errors": r.errors,
+                }
+                for r in results
+            ]
+        }
+        print(json.dumps(report, indent=2))
 
 def main(argv: list[str] | None = None) -> int:
     """Main entry point. Returns exit code.
@@ -134,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Report if requested
     if args.report:
-        print_report(results, args.report)
+        print_report(results, args.report, config.group)
 
     # Exit code: 0 = success, 1 = fatal (no results), 2 = partial
     if not results:
