@@ -12,7 +12,6 @@ from pathlib import Path
 import pytest
 
 from archiver.archiver import (
-    ArchiveResult,
     archive_file,
     archive_group,
     archive_user,
@@ -21,7 +20,6 @@ from archiver.archiver import (
     should_exclude,
 )
 from archiver.config import Config
-
 
 # --- Unit tests: should_exclude (pure function) ---
 
@@ -158,7 +156,8 @@ class TestGetGroupMembers:
             ("other", "x", 1002, 9999, "", "/home/other", "/bin/bash")
         )
         monkeypatch.setattr("archiver.archiver.grp.getgrnam", lambda name: fake_group)
-        monkeypatch.setattr("archiver.archiver.pwd.getpwall", lambda: [fake_alice, fake_other])
+        monkeypatch.setattr("archiver.archiver.pwd.getpwall",
+                            lambda: [fake_alice, fake_other])
         result = get_group_members("testgroup")
         assert sorted(result) == ["alice", "bob"]
         assert len(result) == len(set(result))  # no duplicates
@@ -255,6 +254,7 @@ class TestArchiveUser:
             tmp_archive,
             exclude_patterns=[".ssh/*", ".bashrc", ".cache/*"],
         )
+        assert result.files_skipped > 0
         # excluded files stay in home
         assert (tmp_home / ".ssh" / "id_rsa").exists()
         assert (tmp_home / ".bashrc").exists()
