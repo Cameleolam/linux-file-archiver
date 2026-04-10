@@ -46,3 +46,11 @@ Every line of code in this repo is code I understand and can explain.
   - `test_primary_and_secondary_deduplicated`: grp.gr_mem only has secondary members, need pwd.getpwall() for primary
   - `test_skips_symlinks`: is_symlink() must come before is_file() because symlinks to files return True for both
 - Reviewed the archiver.py code
+
+## 10/04/2026
+
+### Claude Code
+Reviewed cli.py code:
+  - Reviewed parse_args: pointed out required=True on optional args, action="store_true" for flags, metavar for help text
+  - Explained vars(args) and explicit config detection
+  - Fixed setup_logging order (stderr handler before file handler so warnings are visible)

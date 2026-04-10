@@ -267,3 +267,9 @@ I started by defining the tests (me+ai assistant) since this is core logic and g
 I then implemented the core logic and refined with claude (fixed dry run bug, and iterated about the dirnames[:] slice assignment and such)
 
 Added end to end tests (TestArchiveGroup)
+
+## 10/04/2026 : 1 hour
+
+#### Wrote cli.py (ADR 005)
+- Last module: argparse, logging setup, wiring config + lock + archiver, exit codes
+- print_report: TODO, optional JSON output to stdout
