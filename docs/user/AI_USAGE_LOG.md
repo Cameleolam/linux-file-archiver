@@ -55,3 +55,4 @@ Every line of code in this repo is code I understand and can explain.
   - Explained vars(args) and explicit config detection
   - Fixed setup_logging order (stderr handler before file handler so warnings are visible)
 - Filled tests boilerplate on test_cli.py
+- Fixed linting and typing warning from ruff and mypy

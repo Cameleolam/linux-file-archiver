@@ -281,3 +281,5 @@ Added end to end tests (TestArchiveGroup)
 
 
 -- next : review, debian packaging and tests
+
+Ran `poetry run ruff check .` for linting and `poetry run mypy archiver/` for typing
