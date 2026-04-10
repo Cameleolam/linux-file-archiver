@@ -63,3 +63,4 @@ Every line of code in this repo is code I understand and can explain.
 - Generated all 7 debian packaging files (control, rules, changelog, copyright, install, postinst, source/format)
 - Wrote MIT LICENSE
 - Updated README with install/usage/test sections
+- Guided integration test with fake users (alice, bob): dry-run then real run, verified all behaviors

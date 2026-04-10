@@ -304,3 +304,118 @@ Steps done:
 3. Added MIT LICENSE
 4. Created 7 debian files (source/format, changelog, control, rules, copyright, install, postinst)
 5. Updated README with install/usage/test instructions
+
+
+#### Testing
+
+- Step 1: Create test group and users
+```sh
+sudo groupadd testarchive
+sudo useradd -m -G testarchive alice
+sudo useradd -m -G testarchive bob
+```
+
+- Step 2: Create some files in their homes
+```sh
+sudo -u alice bash -c 'mkdir -p ~/documents && echo "alice report" > ~/documents/report.txt && echo "alice notes" > ~/documents/notes.txt'
+sudo -u bob bash -c 'mkdir -p ~/projects/src && echo "bob code" > ~/projects/src/main.py'
+sudo -u alice bash -c 'mkdir -p ~/.cache/deep && echo "cached" > ~/.cache/deep/file.txt'
+sudo -u alice bash -c 'ln -s /etc/passwd ~/link.txt'
+ls -la /home/alice/documents/ /home/alice/.cache/deep/ /home/alice/link.txt /home/bob/projects/src/ 2>&1
+
+lrwxrwxrwx 1 alice alice   11 Apr 10 15:30 /home/alice/link.txt -> /etc/passwd
+
+/home/alice/.cache/deep/:
+total 12
+drwxrwxr-x 2 alice alice 4096 Apr 10 15:30 .
+drwxrwxr-x 3 alice alice 4096 Apr 10 15:30 ..
+-rw-rw-r-- 1 alice alice    7 Apr 10 15:30 file.txt
+
+/home/alice/documents/:
+total 16
+drwxrwxr-x 2 alice alice 4096 Apr 10 15:30 .
+drwx------ 4 alice alice 4096 Apr 10 15:30 ..
+-rw-rw-r-- 1 alice alice   12 Apr 10 15:30 notes.txt
+-rw-rw-r-- 1 alice alice   13 Apr 10 15:30 report.txt
+
+/home/bob/projects/src/:
+total 12
+drwxrwxr-x 2 bob bob 4096 Apr 10 15:30 .
+drwxrwxr-x 3 bob bob 4096 Apr 10 15:30 ..
+-rw-rw-r-- 1 bob bob    9 Apr 10 15:30 main.py
+```
+
+- Step 3: Run archiver (dry-run first)
+```sh
+sudo /home/user/projects/archiver/.venv/bin/python -m archiver.cli --group testarchive --archive-dir /tmp/test-archive --lock-file /tmp/archiver.lock --dry-run --verbose
+2026-04-10 15:37:29,250 INFO  [archiver.archiver] Group 'testarchive' has 2 members: alice, bob
+2026-04-10 15:37:29,250 INFO  [archiver.archiver] Archiving user 'alice' from /home/alice
+2026-04-10 15:37:29,251 WARNING [archiver.archiver] Skipping symlink: /home/alice/link.txt
+2026-04-10 15:37:29,251 INFO  [archiver.archiver] Would move: /home/alice/documents/report.txt -> /tmp/test-archive/alice/documents/report.txt
+2026-04-10 15:37:29,251 INFO  [archiver.archiver] Would move: /home/alice/documents/notes.txt -> /tmp/test-archive/alice/documents/notes.txt
+2026-04-10 15:37:29,252 INFO  [archiver.archiver] User 'alice': moved=2, skipped=4, errors=0
+2026-04-10 15:37:29,252 INFO  [archiver.archiver] Archiving user 'bob' from /home/bob
+2026-04-10 15:37:29,252 INFO  [archiver.archiver] Would move: /home/bob/projects/src/main.py -> /tmp/test-archive/bob/projects/src/main.py
+2026-04-10 15:37:29,252 INFO  [archiver.archiver] User 'bob': moved=1, skipped=3, errors=0
+2026-04-10 15:37:29,252 INFO  [archiver.archiver] Archive complete. Total moved=3, errors=0
+2026-04-10 15:37:29,252 INFO  [archiver] Done: 3 moved, 7 skipped, 0 errors
+```
+
+- Step 4: Run for real
+```sh
+sudo /home/user/projects/archiver/.venv/bin/python -m archiver.cli --group testarchive --archive-dir /tmp/test-archive --lock-file /tmp/archiver.lock --verbose
+2026-04-10 15:44:16,124 INFO  [archiver.archiver] Group 'testarchive' has 2 members: alice, bob
+2026-04-10 15:44:16,125 INFO  [archiver.archiver] Archiving user 'alice' from /home/alice
+2026-04-10 15:44:16,127 WARNING [archiver.archiver] Skipping symlink: /home/alice/link.txt
+2026-04-10 15:44:16,128 INFO  [archiver.archiver] Moved: /home/alice/documents/report.txt -> /tmp/test-archive/alice/documents/report.txt
+2026-04-10 15:44:16,129 INFO  [archiver.archiver] Moved: /home/alice/documents/notes.txt -> /tmp/test-archive/alice/documents/notes.txt
+2026-04-10 15:44:16,129 INFO  [archiver.archiver] User 'alice': moved=2, skipped=4, errors=0
+2026-04-10 15:44:16,131 INFO  [archiver.archiver] Archiving user 'bob' from /home/bob
+2026-04-10 15:44:16,132 INFO  [archiver.archiver] Moved: /home/bob/projects/src/main.py -> /tmp/test-archive/bob/projects/src/main.py
+2026-04-10 15:44:16,132 INFO  [archiver.archiver] User 'bob': moved=1, skipped=3, errors=0
+2026-04-10 15:44:16,132 INFO  [archiver.archiver] Archive complete. Total moved=3, errors=0
+2026-04-10 15:44:16,133 INFO  [archiver] Done: 3 moved, 7 skipped, 0 errors
+```
+
+- Step 5: Verify
+```sh
+ls -R /tmp/test-archive/
+/tmp/test-archive/:
+alice  bob
+
+/tmp/test-archive/alice:
+documents
+
+/tmp/test-archive/alice/documents:
+notes.txt  report.txt
+
+/tmp/test-archive/bob:
+projects
+
+/tmp/test-archive/bob/projects:
+src
+
+/tmp/test-archive/bob/projects/src:
+main.py
+
+cat /tmp/test-archive/alice/documents/report.txt
+alice report
+
+sudo ls /home/alice/documents/  # should be empty
+sudo ls /home/alice/.cache/     # should still be there (excluded)
+deep
+sudo ls /home/alice/link.txt    # should still be there (symlink skipped)
+/home/alice/link.tx
+```
+
+- Step 6: Cleanup
+```sh
+sudo userdel -r alice
+sudo userdel -r bob
+sudo groupdel testarchive
+rm -rf /tmp/test-archive
+```
+
+All tests passed: files moved, structure preserved, content preserved, excludes respected, symlinks skipped, source files removed.
+
+Note: needed `--lock-file` CLI arg because default `/var/lock/archiver.lock` wasn't writable. Added the option to cli.py — merge_configs already handled `lock_file` in the path fields loop, so only argparse needed the new argument.
