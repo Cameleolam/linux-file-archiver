@@ -268,8 +268,16 @@ I then implemented the core logic and refined with claude (fixed dry run bug, an
 
 Added end to end tests (TestArchiveGroup)
 
-## 10/04/2026 : 1 hour
+## 10/04/2026 : 1 hour 30
 
-#### Wrote cli.py (ADR 005)
+#### Wrote cli.py and test_cli.py (ADR 005)
 - Last module: argparse, logging setup, wiring config + lock + archiver, exit codes
 - print_report: TODO, optional JSON output to stdout
+- Wrote small tests boilerplate on:
+  - args parsing (required, default value)
+  - exit codes returns on main
+- Filled it with ai tools
+- Wrote optional print_report in cli.py to write json outputs
+
+
+-- next : review, debian packaging and tests

@@ -50,7 +50,8 @@ Every line of code in this repo is code I understand and can explain.
 ## 10/04/2026
 
 ### Claude Code
-Reviewed cli.py code:
+- Reviewed cli.py code:
   - Reviewed parse_args: pointed out required=True on optional args, action="store_true" for flags, metavar for help text
   - Explained vars(args) and explicit config detection
   - Fixed setup_logging order (stderr handler before file handler so warnings are visible)
+- Filled tests boilerplate on test_cli.py
